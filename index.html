@@ -135,22 +135,25 @@
     (()=>{
       const mobileCharacter=document.querySelector('.hero-character-mobile');
       const hero=document.querySelector('.hero');
-      if(!mobileCharacter||!hero||!window.matchMedia('(max-width:760px)').matches)return;
+      if(!mobileCharacter||!hero)return;
       let ticking=false;
       const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
       const update=()=>{
         ticking=false;
-        const bounds=hero.getBoundingClientRect();
-        const progress=clamp(-bounds.top/(Math.max(1,bounds.height*.48)),0,1);
+        const pageTop=window.scrollY||window.pageYOffset||0;
+        const heroTop=hero.getBoundingClientRect().top+pageTop;
+        const progress=clamp((pageTop-heroTop)/(Math.max(1,hero.offsetHeight*.7)),0,1);
         mobileCharacter.style.setProperty('--mobile-scroll',progress.toFixed(3));
       };
       const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
       window.addEventListener('scroll',onScroll,{passive:true});
       window.addEventListener('resize',onScroll,{passive:true});
+      window.visualViewport?.addEventListener('scroll',onScroll,{passive:true});
       update();
       window.addEventListener('pagehide',()=>{
         window.removeEventListener('scroll',onScroll);
         window.removeEventListener('resize',onScroll);
+        window.visualViewport?.removeEventListener('scroll',onScroll);
       },{once:true});
     })();
     const TELEGRAM_URL = '';
