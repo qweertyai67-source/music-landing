@@ -44,11 +44,12 @@
   <script>
     (()=>{
       const character=document.querySelector('.hero-character');
+      const hero=character?.closest('.hero');
       const button=document.querySelector('.motion-permission');
       const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const finePointer=window.matchMedia('(pointer: fine)');
       const hasOrientation='DeviceOrientationEvent' in window;
-      if(!character||!button||reduced){if(button)button.hidden=true;return}
+      if(!character||!hero||!button||reduced){if(button)button.hidden=true;return}
 
       let targetX=0,targetY=0,currentX=0,currentY=0,lastFrame=performance.now();
       let raf=0,baselineBeta=null,baselineGamma=null,sensorActive=false;
@@ -85,9 +86,12 @@
       };
 
       const resetTarget=()=>setTarget(0,0);
+      const resetCalibration=()=>{baselineBeta=null;baselineGamma=null;sensorActive=false;resetTarget()};
       const desktopMove=(event)=>{
         if(window.innerWidth<768||!finePointer.matches||event.pointerType==='touch')return;
-        setTarget(-(event.clientX/window.innerWidth-.5)*52,-(event.clientY/window.innerHeight-.5)*36);
+        const bounds=hero.getBoundingClientRect();
+        if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom){resetTarget();return}
+        setTarget(-((event.clientX-bounds.left)/bounds.width-.5)*52,-((event.clientY-bounds.top)/bounds.height-.5)*36);
       };
       const desktopLeave=()=>{if(!sensorActive)resetTarget()};
 
@@ -110,8 +114,9 @@
         }catch(error){button.textContent='Motion недоступен';setTimeout(()=>{button.hidden=true},1800)}
       };
 
-      window.addEventListener('pointermove',desktopMove,{passive:true});
-      window.addEventListener('pointerleave',desktopLeave,{passive:true});
+      hero.addEventListener('pointermove',desktopMove,{passive:true});
+      hero.addEventListener('pointerleave',desktopLeave,{passive:true});
+      window.addEventListener('orientationchange',resetCalibration,{passive:true});
       button.addEventListener('click',enableMotion);
       if(window.innerWidth>=768||!hasOrientation)button.hidden=true;
       if(hasOrientation&&typeof window.DeviceOrientationEvent.requestPermission!=='function')attachSensor();
@@ -119,8 +124,9 @@
 
       const cleanup=()=>{
         cancelAnimationFrame(raf);
-        window.removeEventListener('pointermove',desktopMove);
-        window.removeEventListener('pointerleave',desktopLeave);
+        hero.removeEventListener('pointermove',desktopMove);
+        hero.removeEventListener('pointerleave',desktopLeave);
+        window.removeEventListener('orientationchange',resetCalibration);
         window.removeEventListener('deviceorientation',readTilt);
         button.removeEventListener('click',enableMotion);
       };
