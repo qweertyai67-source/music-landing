@@ -42,7 +42,90 @@
   <footer class="wrap footer"><span>© 2026 ARTIST SITE STUDIO</span><span class="mono">made for independent artists</span></footer>
   <div class="toast" id="toast">Добавь реальную ссылку Telegram в `TELEGRAM_URL` перед публикацией.</div>
   <script>
-    (()=>{const character=document.querySelector('.hero-character'),button=document.querySelector('.motion-permission'),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;let targetX=0,targetY=0,currentX=0,currentY=0,raf=0;function render(){currentX+=(targetX-currentX)*.12;currentY+=(targetY-currentY)*.12;character.style.setProperty('--character-x',`${currentX}px`);character.style.setProperty('--character-y',`${currentY}px`);character.style.setProperty('--character-rotate',`${currentX*.018}deg`);raf=requestAnimationFrame(render)}function setTarget(x,y){targetX=Math.max(-42,Math.min(42,x));targetY=Math.max(-30,Math.min(30,y))}function desktopMove(event){if(innerWidth<768||reduced)return;const x=event.clientX/innerWidth-.5,y=event.clientY/innerHeight-.5;setTarget(-x*84,-y*60)}function orientation(event){if(innerWidth>=768||reduced)return;const gamma=Math.max(-45,Math.min(45,event.gamma||0)),beta=Math.max(-45,Math.min(45,(event.beta||0)-45));setTarget(-(gamma/45)*42,-(beta/45)*30)}function enableMotion(){if(typeof DeviceOrientationEvent==='undefined'){button.hidden=true;return}const permission=DeviceOrientationEvent.requestPermission;if(typeof permission==='function'){permission().then(state=>{if(state==='granted'){addEventListener('deviceorientation',orientation,{passive:true});button.textContent='Motion включён';setTimeout(()=>button.hidden=true,1200)}}).catch(()=>{})}else{addEventListener('deviceorientation',orientation,{passive:true});button.hidden=true}}if(!reduced){addEventListener('pointermove',desktopMove,{passive:true});button.addEventListener('click',enableMotion);if(innerWidth>=768)button.hidden=true;render()}else{button.hidden=true}})();
+    (()=>{
+      const character=document.querySelector('.hero-character');
+      const button=document.querySelector('.motion-permission');
+      const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const finePointer=window.matchMedia('(pointer: fine)');
+      const hasOrientation='DeviceOrientationEvent' in window;
+      if(!character||!button||reduced){if(button)button.hidden=true;return}
+
+      let targetX=0,targetY=0,currentX=0,currentY=0,lastFrame=performance.now();
+      let raf=0,baselineBeta=null,baselineGamma=null,sensorActive=false;
+      const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+      const setTarget=(x,y)=>{targetX=clamp(x,-26,26);targetY=clamp(y,-18,18)};
+
+      const render=(now)=>{
+        const delta=Math.min(80,now-lastFrame); lastFrame=now;
+        const easing=1-Math.pow(.001,delta/1000);
+        currentX+=(targetX-currentX)*easing;
+        currentY+=(targetY-currentY)*easing;
+        character.style.setProperty('--character-x',`${currentX.toFixed(2)}px`);
+        character.style.setProperty('--character-y',`${currentY.toFixed(2)}px`);
+        character.style.setProperty('--character-rotate',`${(currentX*.075).toFixed(2)}deg`);
+        raf=requestAnimationFrame(render);
+      };
+
+      const screenAngle=()=>{
+        const angle=window.screen.orientation?.angle;
+        return Number.isFinite(angle)?angle:(Number(window.orientation)||0);
+      };
+
+      const readTilt=(event)=>{
+        if(window.innerWidth>=768||!Number.isFinite(event.beta)||!Number.isFinite(event.gamma))return;
+        const angle=((screenAngle()%360)+360)%360;
+        let beta=event.beta,gamma=event.gamma;
+        if(angle===90){const nextBeta=gamma;gamma=-beta;beta=nextBeta}
+        else if(angle===270){const nextBeta=-gamma;gamma=beta;beta=nextBeta}
+        if(baselineBeta===null){baselineBeta=beta;baselineGamma=gamma;return}
+        const relativeBeta=clamp(beta-baselineBeta,-30,30);
+        const relativeGamma=clamp(gamma-baselineGamma,-30,30);
+        sensorActive=true;
+        setTarget(-(relativeGamma/30)*26,-(relativeBeta/30)*18);
+      };
+
+      const resetTarget=()=>setTarget(0,0);
+      const desktopMove=(event)=>{
+        if(window.innerWidth<768||!finePointer.matches||event.pointerType==='touch')return;
+        setTarget(-(event.clientX/window.innerWidth-.5)*52,-(event.clientY/window.innerHeight-.5)*36);
+      };
+      const desktopLeave=()=>{if(!sensorActive)resetTarget()};
+
+      const attachSensor=()=>{
+        if(!hasOrientation)return false;
+        window.addEventListener('deviceorientation',readTilt,{passive:true});
+        return true;
+      };
+      const enableMotion=async()=>{
+        if(!hasOrientation){button.hidden=true;return}
+        try{
+          const request=window.DeviceOrientationEvent.requestPermission;
+          if(typeof request==='function'){
+            const state=await request();
+            if(state!=='granted'){button.textContent='Доступ к motion отклонён';setTimeout(()=>{button.hidden=true},1800);return}
+          }
+          attachSensor();
+          button.textContent='Motion включён';
+          setTimeout(()=>{button.hidden=true},1200);
+        }catch(error){button.textContent='Motion недоступен';setTimeout(()=>{button.hidden=true},1800)}
+      };
+
+      window.addEventListener('pointermove',desktopMove,{passive:true});
+      window.addEventListener('pointerleave',desktopLeave,{passive:true});
+      button.addEventListener('click',enableMotion);
+      if(window.innerWidth>=768||!hasOrientation)button.hidden=true;
+      if(hasOrientation&&typeof window.DeviceOrientationEvent.requestPermission!=='function')attachSensor();
+      raf=requestAnimationFrame(render);
+
+      const cleanup=()=>{
+        cancelAnimationFrame(raf);
+        window.removeEventListener('pointermove',desktopMove);
+        window.removeEventListener('pointerleave',desktopLeave);
+        window.removeEventListener('deviceorientation',readTilt);
+        button.removeEventListener('click',enableMotion);
+      };
+      window.addEventListener('pagehide',cleanup,{once:true});
+    })();
     const TELEGRAM_URL = '';
     const params = new URLSearchParams(location.search);
     const utm = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].reduce((o,k)=>{if(params.get(k))o[k]=params.get(k);return o},{});
