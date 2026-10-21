@@ -155,7 +155,10 @@
         const heroTop=hero.getBoundingClientRect().top+pageTop;
         const titleTop=title.getBoundingClientRect().top-hero.getBoundingClientRect().top;
         hero.style.setProperty('--mobile-title-top',`${titleTop.toFixed(1)}px`);
-        const progress=clamp((pageTop-heroTop)/(Math.max(1,Math.min(hero.offsetHeight*.22,180))),0,1);
+        const viewportHeight=window.visualViewport?.height||window.innerHeight;
+        const scrollDelay=Math.min(60,viewportHeight*.08);
+        const scrollDistance=clamp(viewportHeight*.42,240,360);
+        const progress=clamp((pageTop-heroTop-scrollDelay)/scrollDistance,0,1);
         const scrollValue=progress.toFixed(3);
         mobileCharacter.style.setProperty('--mobile-scroll',scrollValue);
         hero.style.setProperty('--mobile-scroll',scrollValue);
