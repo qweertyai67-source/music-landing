@@ -35,6 +35,18 @@
     @media(max-width:760px){.nav{gap:10px}.brand{flex:none}.nav-eyebrow{display:inline-flex;align-items:flex-start;justify-content:flex-end;gap:3px;min-width:0;max-width:calc(100% - 140px);margin-left:auto;color:var(--lime);font-size:8px;line-height:1.2;text-align:right}.nav-eyebrow-arrow{flex:none;font-size:12px;line-height:1}.hero .eyebrow{display:none}}
     @media(max-width:760px){.hero:before{top:calc(var(--mobile-title-top, 60%) - 90px);bottom:0;height:auto;background:linear-gradient(to bottom,transparent,var(--ink) 90px)}.hero-character-mobile{left:44%;opacity:calc(.78 - var(--mobile-scroll,0) * .78)}.hero h1{font-size:clamp(22px,8.2vw,40px)}.hero h1 .hero-line{display:block;white-space:nowrap}.hero h1 .hero-line-break{display:none}}
     @media(max-width:760px){.section-head .section-title,.reason h3{letter-spacing:2px}.section-head .section-note,.reason p{letter-spacing:1px}}
+    @media(max-width:760px){
+      main section.wrap:not(.hero) .section-head,.reasons .reason,.feature,.format,.step,.faq{text-align:center}
+      main section.wrap:not(.hero) .eyebrow,.final .eyebrow{justify-content:center}
+      .section-title,.section-note,.reason p,.feature p,.final h2,.final-note{margin-left:auto;margin-right:auto}
+      .process{grid-template-columns:1fr}
+      .process .step{padding:20px 0;border-left:0}
+      .faq summary{display:block;position:relative;padding:0 30px;text-align:center}
+      .faq summary:after{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+      .faq details p{margin-left:auto;margin-right:auto;text-align:center}
+      .final .wrap,.footer{text-align:center}
+      .footer{align-items:center}
+    }
   </style>
 </head>
 <body>
