@@ -47,6 +47,15 @@
       .final .wrap,.footer{text-align:center}
       .footer{align-items:center}
     }
+    @media(max-width:760px){
+      .faq-answer{overflow:hidden}
+      .faq summary::before,.faq details summary::after,.faq details[open] summary::after{content:'';position:absolute;top:50%;display:block;background:var(--lime);border-radius:2px;opacity:1;transition:transform .35s ease,opacity .35s ease,background-color .35s ease}
+      .faq summary::before{right:7px;width:3px;height:17px;transform:translateY(-50%)}
+      .faq details summary::after,.faq details[open] summary::after{right:0;width:17px;height:3px;transform:translateY(-50%);font-size:0}
+      .faq details[open]:not(.is-closing) summary::before{transform:translateY(-50%) scaleY(0);opacity:.55;background:#789b31}
+      .faq details[open]:not(.is-closing) summary::after{opacity:.55;background:#789b31}
+    }
+    @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}}
   </style>
 </head>
 <body>
@@ -59,7 +68,7 @@
     <section id="formats" class="wrap"><div class="section-head"><div><div class="eyebrow mono">Что может быть внутри</div><h2 class="section-title">Собираем под задачу.</h2></div><p class="section-note">Конкретный состав определяем после знакомства с проектом. Это примеры возможных блоков.</p></div><div class="features"><article class="feature"><div class="feature-icon">◉</div><h3>Карточка артиста</h3><p>Фото, имя, жанр и короткий текст, который сразу задаёт контекст.</p></article><article class="feature"><div class="feature-icon">↗</div><h3>Релиз в фокусе</h3><p>Обложка, описание и переходы к прослушиванию — без лишнего шума.</p></article><article class="feature"><div class="feature-icon">⌁</div><h3>Все ссылки рядом</h3><p>Стриминги, соцсети, Telegram, контакты для сотрудничества и букинга.</p></article></div></section>
     <section class="wrap"><div class="section-head"><div><div class="eyebrow mono">Форматы работы</div><h2 class="section-title">От одной ссылки<br>до своего пространства.</h2></div></div><div class="formats"><article class="format"><span class="mono">01 / компактно</span><span class="format-arrow">↗</span><h3>Страница со ссылками</h3><p>Чистая точка входа для трафика из TikTok и других соцсетей.</p></article><article class="format"><span class="mono">02 / под релиз</span><span class="format-arrow">↗</span><h3>Лендинг релиза</h3><p>Отдельная страница для трека, EP или альбома с нужным настроением.</p></article><article class="format"><span class="mono">03 / целиком</span><span class="format-arrow">↗</span><h3>Персональный сайт</h3><p>Пространство артиста: музыка, визуалы, события, пресс-кит и контакты.</p></article></div></section>
     <section class="wrap"><div class="section-head"><div><div class="eyebrow mono">Как это происходит</div><h2 class="section-title">Сначала слушаем.<br>Потом собираем.</h2></div><p class="section-note">Пять понятных шагов — без обещаний «за N дней» и без выдуманного процесса.</p></div><div class="process"><article class="step"><div class="step-num">01</div><h3>Знакомство</h3><p>Разбираемся в задаче, музыке и материалах.</p></article><article class="step"><div class="step-num">02</div><h3>Концепция</h3><p>Определяем структуру и визуальное направление.</p></article><article class="step"><div class="step-num">03</div><h3>Разработка</h3><p>Собираем страницу и нужные интерактивные блоки.</p></article><article class="step"><div class="step-num">04</div><h3>Согласование</h3><p>Проверяем детали и вносим правки по задаче.</p></article><article class="step"><div class="step-num">05</div><h3>Запуск</h3><p>Подключаем домен и готовим страницу к трафику.</p></article></div></section>
-    <section class="wrap"><div class="faq"><div><div class="eyebrow mono">FAQ</div><h2 class="section-title">Перед стартом.</h2></div><div class="faq-list"><details><summary>Что нужно подготовить?</summary><p>Для начала достаточно ссылки на музыку, визуальные материалы и понимания задачи. Если чего-то не хватает, обсудим это на старте.</p></details><details><summary>Сайт будет нормально работать на телефоне?</summary><p>Да. Мобильная версия — основа проекта, потому что большая часть переходов приходит из встроенного браузера TikTok.</p></details><details><summary>Можно ли обновлять релизы?</summary><p>Да, порядок обновления обсуждаем под выбранный формат и задачу проекта.</p></details><details><summary>Нужен ли свой домен?</summary><p>Не обязательно на старте. Варианты с доменом и его подключением обсуждаем отдельно.</p></details><details><summary>Как узнать стоимость?</summary><p>Стоимость зависит от формата и состава работы. После короткого знакомства предложим подходящий вариант.</p></details></div></div></section>
+    <section class="wrap"><div class="faq"><div><div class="eyebrow mono">FAQ</div><h2 class="section-title">Перед стартом.</h2></div><div class="faq-list"><details><summary>Что нужно подготовить?</summary><div class="faq-answer"><p>Для начала достаточно ссылки на музыку, визуальные материалы и понимания задачи. Если чего-то не хватает, обсудим это на старте.</p></div></details><details><summary>Сайт будет нормально работать на телефоне?</summary><div class="faq-answer"><p>Да. Мобильная версия — основа проекта, потому что большая часть переходов приходит из встроенного браузера TikTok.</p></div></details><details><summary>Можно ли обновлять релизы?</summary><div class="faq-answer"><p>Да, порядок обновления обсуждаем под выбранный формат и задачу проекта.</p></div></details><details><summary>Нужен ли свой домен?</summary><div class="faq-answer"><p>Не обязательно на старте. Варианты с доменом и его подключением обсуждаем отдельно.</p></div></details><details><summary>Как узнать стоимость?</summary><div class="faq-answer"><p>Стоимость зависит от формата и состава работы. После короткого знакомства предложим подходящий вариант.</p></div></details></div></div></section>
     <section class="final"><div class="wrap"><div class="eyebrow mono">Следующий шаг</div><h2>Покажи, как звучит твой проект.</h2><a class="btn telegram-link" href="#telegram">Перейти в Telegram-канал <span>↗</span></a><p class="final-note">В канале — дополнительные материалы и детали о работе. Настоящую ссылку Telegram нужно добавить перед публикацией.</p></div></section>
   </main>
   <footer class="wrap footer"><span>© 2026 ARTIST SITE STUDIO</span><span class="mono">made for independent artists</span></footer>
@@ -187,6 +196,40 @@
         window.visualViewport?.removeEventListener('scroll',onScroll);
       },{once:true});
     })();
+    (()=>{
+      const animatedMobile=window.matchMedia('(max-width:760px) and (prefers-reduced-motion:no-preference)');
+      document.querySelectorAll('.faq-list details').forEach(details=>{
+        const summary=details.querySelector('summary');
+        const answer=details.querySelector('.faq-answer');
+        if(!summary||!answer)return;
+        let expanded=details.open;
+        let animation=null;
+        summary.addEventListener('click',event=>{
+          if(!animatedMobile.matches||!answer.animate)return;
+          event.preventDefault();
+          expanded=animation?!expanded:!details.open;
+          const startHeight=details.open?answer.getBoundingClientRect().height:0;
+          const startOpacity=details.open?Number(getComputedStyle(answer).opacity):0;
+          if(animation)animation.cancel();
+          if(expanded){details.open=true;details.classList.remove('is-closing')}
+          else details.classList.add('is-closing');
+          answer.style.height=`${startHeight}px`;
+          answer.style.opacity=String(startOpacity);
+          const endHeight=expanded?answer.scrollHeight:0;
+          animation=answer.animate([
+            {height:`${startHeight}px`,opacity:startOpacity},
+            {height:`${endHeight}px`,opacity:expanded?1:0}
+          ],{duration:expanded?420:360,easing:'cubic-bezier(.22,1,.36,1)'});
+          animation.onfinish=()=>{
+            if(!expanded)details.open=false;
+            details.classList.remove('is-closing');
+            answer.style.height='';
+            answer.style.opacity='';
+            animation=null;
+          };
+        });
+      });
+    })();
     const TELEGRAM_URL = '';
     const params = new URLSearchParams(location.search);
     const utm = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].reduce((o,k)=>{if(params.get(k))o[k]=params.get(k);return o},{});
@@ -199,4 +242,3 @@
   </script>
 </body>
 </html>
-
