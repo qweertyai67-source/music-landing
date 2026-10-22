@@ -114,10 +114,27 @@
       .hero h1,.section-title,.reason h3,.format h3,.step h3,.faq .section-title{text-shadow:0 0 12px rgba(242,242,242,.14),0 0 28px rgba(242,242,242,.07)}
       .hero-copy,.section-note,.reason p,.format p,.step p,.faq details p{text-shadow:0 0 10px rgba(242,242,242,.1),0 0 22px rgba(242,242,242,.05)}
     }
-    @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}.scroll-ghost{display:none}}
+    .horror-flash{display:none}
+    @media(max-width:760px){
+      body::before{content:'';position:fixed;z-index:9998;inset:-14%;pointer-events:none;opacity:.72;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px),repeating-linear-gradient(90deg,transparent 0 39px,rgba(255,255,255,.012) 40px);mix-blend-mode:screen;animation:horror-grain .42s steps(2,end) infinite}
+      body::after{content:'';position:fixed;z-index:9997;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.18) 68%,rgba(0,0,0,.72) 100%)}
+      .horror-flash{display:block;position:fixed;z-index:9999;inset:0;pointer-events:none;background:#d8d8d8;mix-blend-mode:difference;opacity:0;transition:opacity .08s steps(2,end)}
+      .horror-flash.is-active{opacity:.075}
+      .hero h1,.section-title,.reason h3,.format h3,.step h3,.faq summary{transform-origin:center center;will-change:transform,filter}
+      .horror-glitch{animation:horror-text-jolt .38s steps(2,end) both}
+      .eyebrow,.reason-num,.step-num,.mono{text-shadow:0 0 9px rgba(242,242,242,.13)}
+      .concept,.feature,.format{outline:1px solid rgba(242,242,242,.07);outline-offset:-1px;animation:horror-border-pulse 7.5s steps(1,end) infinite}
+      .concept:nth-child(2n),.feature:nth-child(2n),.format:nth-child(2n){animation-delay:-3.4s}
+      .btn:active{transform:translateY(1px) scale(.985)!important;filter:brightness(.68) contrast(1.28);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 0 22px rgba(220,220,220,.1)!important}
+      @keyframes horror-grain{0%{transform:translate3d(-1.5%,1%,0)}25%{transform:translate3d(1%,-1.5%,0)}50%{transform:translate3d(.5%,1.5%,0)}75%{transform:translate3d(-1%,.5%,0)}100%{transform:translate3d(1.5%,-.5%,0)}}
+      @keyframes horror-text-jolt{0%,100%{transform:translate3d(0,0,0);filter:none;opacity:1}18%{transform:translate3d(-1px,0,0);filter:blur(.25px);opacity:.82}28%{transform:translate3d(1px,1px,0);filter:contrast(1.35);opacity:1}38%{transform:translate3d(-.5px,-1px,0);filter:none;opacity:.9}52%{transform:translate3d(.5px,0,0);opacity:1}}
+      @keyframes horror-border-pulse{0%,17%,21%,64%,68%,100%{outline-color:rgba(242,242,242,.07);box-shadow:none}18%{outline-color:rgba(242,242,242,.18);box-shadow:0 0 12px rgba(242,242,242,.045)}20%,67%{outline-color:rgba(242,242,242,.035)}}
+    }
+    @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}.scroll-ghost{display:none}.horror-flash{display:none}.horror-glitch,.concept,.feature,.format{animation:none}body::before{animation:none;opacity:.35}}
   </style>
 </head>
 <body>
+  <div class="horror-flash" aria-hidden="true"></div>
   <div class="scroll-ghost" aria-hidden="true"><img src="/ghostface-mobile.png" alt="" decoding="async"></div>
   <header class="wrap nav"><a class="brand" href="#top">ASS<span>T</span> / SITE</a><span class="nav-eyebrow mono"><span class="nav-eyebrow-arrow" aria-hidden="true">↗</span><span>Персональные сайты для артистов</span></span><a class="nav-link mono" href="#formats">Что внутри ↘</a></header>
   <main id="top">
@@ -326,6 +343,31 @@
       mobile.addEventListener('change',update);
       reducedMotion.addEventListener('change',update);
       update();
+    })();
+    (()=>{
+      const mobile=window.matchMedia('(max-width:760px)');
+      const reducedMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
+      const flash=document.querySelector('.horror-flash');
+      if(!mobile.matches||reducedMotion.matches||!flash||!('IntersectionObserver' in window))return;
+      const seen=new WeakSet();
+      let lastFlash=0;
+      const trigger=element=>{
+        if(seen.has(element))return;
+        seen.add(element);
+        element.classList.add('horror-glitch');
+        setTimeout(()=>element.classList.remove('horror-glitch'),460);
+        if(element.matches('.section-title')&&performance.now()-lastFlash>900){
+          lastFlash=performance.now();
+          flash.classList.add('is-active');
+          setTimeout(()=>flash.classList.remove('is-active'),90);
+        }
+      };
+      const observer=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{if(entry.isIntersecting)trigger(entry.target)});
+      },{threshold:.38,rootMargin:'0px 0px -10% 0px'});
+      document.querySelectorAll('.section-title,.reason h3,.format h3,.step h3,.faq summary').forEach(element=>observer.observe(element));
+      const heroTitle=document.querySelector('.hero h1');
+      if(heroTitle)setTimeout(()=>trigger(heroTitle),260);
     })();
     (()=>{
       const animatedMobile=window.matchMedia('(max-width:760px) and (prefers-reduced-motion:no-preference)');
