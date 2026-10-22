@@ -166,8 +166,8 @@
       #concepts{padding-top:110px}
       #concepts .section-head{display:grid;grid-template-columns:minmax(330px,.82fr) minmax(520px,1.18fr);grid-template-areas:"visual title" "visual note";column-gap:clamp(54px,7vw,124px);row-gap:22px;align-items:end;min-height:clamp(430px,43vw,620px)}
       #concepts .section-head>.concepts-figure-wrap{grid-area:visual;align-self:stretch;position:relative;display:flex;align-items:flex-end;justify-content:center;min-width:0;overflow:hidden;isolation:isolate}
-      #concepts .section-head>.concepts-figure-wrap:after{content:'';position:absolute;z-index:2;inset:auto 0 0;height:24%;background:linear-gradient(to bottom,transparent,#0d0d0d 94%);pointer-events:none}
-      #concepts .concepts-figure{display:block;width:min(100%,560px);max-height:610px;object-fit:contain;object-position:center bottom;image-rendering:auto;filter:contrast(1.04) drop-shadow(0 20px 30px rgba(0,0,0,.46));-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 75%,rgba(0,0,0,.94) 83%,rgba(0,0,0,.55) 92%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 75%,rgba(0,0,0,.94) 83%,rgba(0,0,0,.55) 92%,transparent 100%)}
+      #concepts .section-head>.concepts-figure-wrap:after{content:'';position:absolute;z-index:2;inset:auto 0 0;height:38%;background:linear-gradient(to bottom,transparent 0%,rgba(13,13,13,.08) 24%,rgba(13,13,13,.55) 68%,#0d0d0d 100%);pointer-events:none}
+      #concepts .concepts-figure{position:relative;z-index:1;display:block;width:min(100%,560px);max-height:610px;object-fit:contain;object-position:center bottom;image-rendering:auto;filter:contrast(1.04) drop-shadow(0 20px 30px rgba(0,0,0,.46))}
       #concepts .section-head>div:not(.concepts-figure-wrap){grid-area:title;align-self:end;max-width:760px}
       #concepts .section-head>.section-note{grid-area:note;align-self:start;max-width:430px;margin:0}
       html.desktop-motion #concepts .concepts-figure-wrap{opacity:0;transform:translate3d(-56px,28px,0) scale(.965);transition:opacity .9s ease .08s,transform 1.05s cubic-bezier(.22,1,.36,1) .08s}
