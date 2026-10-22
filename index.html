@@ -100,7 +100,7 @@
     }
     .scroll-ghost{display:none}
     @media(max-width:760px){
-      .scroll-ghost{display:block;position:fixed;top:clamp(105px,18svh,190px);left:0;width:clamp(175px,55vw,260px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% + var(--ghost-reveal,0px)),0,0);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .32s ease;will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
+      .scroll-ghost{display:block;position:fixed;top:clamp(24px,5svh,55px);left:0;width:clamp(175px,55vw,260px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% + var(--ghost-reveal,0px)),0,0);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .32s ease;will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
       .scroll-ghost img{display:block;width:100%;height:auto;transform:scaleX(-1)}
     }
     @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}.scroll-ghost{display:none}}
