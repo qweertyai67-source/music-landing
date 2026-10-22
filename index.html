@@ -98,10 +98,16 @@
       .feature p{font-size:9px;line-height:1.35;margin:0;max-width:100%;letter-spacing:0}
       .feature:nth-child(3) .feature-icon{margin:0 0 5px}
     }
-    @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}}
+    .scroll-ghost{display:none}
+    @media(max-width:760px){
+      .scroll-ghost{display:block;position:fixed;top:clamp(105px,18svh,190px);left:0;width:clamp(175px,55vw,260px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% + var(--ghost-reveal,0px)),0,0);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .32s ease;will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
+      .scroll-ghost img{display:block;width:100%;height:auto;transform:scaleX(-1)}
+    }
+    @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}.scroll-ghost{display:none}}
   </style>
 </head>
 <body>
+  <div class="scroll-ghost" aria-hidden="true"><img src="/ghostface-mobile.png" alt="" decoding="async"></div>
   <header class="wrap nav"><a class="brand" href="#top">ASS<span>T</span> / SITE</a><span class="nav-eyebrow mono"><span class="nav-eyebrow-arrow" aria-hidden="true">↗</span><span>Персональные сайты для артистов</span></span><a class="nav-link mono" href="#formats">Что внутри ↘</a></header>
   <main id="top">
     <section class="wrap hero"><div class="hero-grid"><div><div class="eyebrow mono">Персональные сайты для артистов</div><h1><span class="hero-line">Твоя музыка.</span><br class="hero-line-break"><em class="hero-line">Твой образ.</em><br class="hero-line-break desktop-break"><span class="hero-line">Твой сайт.</span></h1><div class="actions"><a class="btn telegram-link" href="#telegram">Перейти в Telegram-канал <span>↗</span></a><a class="btn ghost" href="#concepts">Смотреть концепции ↓</a></div></div><p class="hero-copy">Собираем музыку, визуальный образ и важные ссылки в одну страницу, которую хочется открыть и запомнить.</p></div><img class="hero-character" src="/hero-character.png" alt="Артист, обращающийся к зрителю"><img class="hero-character-mobile" src="/mobile-character.png" alt="Артист" aria-hidden="true"><button class="motion-permission" type="button">Включить motion</button></section>
@@ -238,6 +244,31 @@
         window.removeEventListener('resize',onScroll);
         window.visualViewport?.removeEventListener('scroll',onScroll);
       },{once:true});
+    })();
+    (()=>{
+      const ghost=document.querySelector('.scroll-ghost');
+      const mobile=window.matchMedia('(max-width:760px)');
+      const reducedMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
+      if(!ghost)return;
+      let ticking=false;
+      const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+      const update=()=>{
+        ticking=false;
+        if(!mobile.matches||reducedMotion.matches)return;
+        const scrollable=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+        const progress=clamp(window.scrollY/scrollable,0,1);
+        const nearestQuarter=Math.min(...[.25,.5,.75,1].map(quarter=>Math.abs(progress-quarter)));
+        const phase=clamp(1-nearestQuarter/.105,0,1);
+        const reveal=phase*phase*(3-2*phase);
+        ghost.style.setProperty('--ghost-reveal',`${(Math.min(window.innerWidth*.37,170)*reveal).toFixed(1)}px`);
+        ghost.style.setProperty('--ghost-opacity',(reveal*.92).toFixed(3));
+      };
+      const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
+      window.addEventListener('scroll',onScroll,{passive:true});
+      window.addEventListener('resize',onScroll,{passive:true});
+      mobile.addEventListener('change',onScroll);
+      reducedMotion.addEventListener('change',onScroll);
+      update();
     })();
     (()=>{
       const animatedMobile=window.matchMedia('(max-width:760px) and (prefers-reduced-motion:no-preference)');
