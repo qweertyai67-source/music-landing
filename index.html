@@ -282,7 +282,10 @@
       if(!host||!video||!canvas||reducedMotion.matches)return;
       const context=canvas.getContext('2d',{willReadFrequently:true});
       if(!context)return;
-      let width=0,height=0,stopped=false,started=false,fallbackFrame=0;
+      const buffer=document.createElement('canvas');
+      const bufferContext=buffer.getContext('2d',{willReadFrequently:true});
+      if(!bufferContext)return;
+      let width=0,height=0,stopped=false,started=false,fallbackFrame=0,crop=null;
       const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
       const prepare=()=>{
         if(!video.videoWidth||!video.videoHeight)return;
@@ -291,23 +294,51 @@
         height=Math.max(1,Math.round(width*video.videoHeight/video.videoWidth));
         canvas.width=width;
         canvas.height=height;
+        buffer.width=width;
+        buffer.height=height;
+        crop=null;
       };
       const removeBlackBackground=frame=>{
         const pixels=frame.data;
+        let minX=width,minY=height,maxX=-1,maxY=-1;
         for(let offset=0;offset<pixels.length;offset+=4){
           const red=pixels[offset],green=pixels[offset+1],blue=pixels[offset+2];
           const lightness=Math.max(red,green,blue);
           const alpha=Math.round(clamp((lightness-10)/42,0,1)*255);
           pixels[offset+3]=Math.min(pixels[offset+3],alpha);
+          if(alpha>48){
+            const index=offset/4,x=index%width,y=Math.floor(index/width);
+            if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;
+          }
         }
+        if(maxX<minX||maxY<minY)return null;
+        const padding=Math.max(5,Math.round(Math.max(maxX-minX,maxY-minY)*.09));
+        let left=minX-padding,top=minY-padding;
+        let cropWidth=maxX-minX+1+padding*2,cropHeight=maxY-minY+1+padding*2;
+        const aspect=width/height;
+        if(cropWidth/cropHeight>aspect){const nextHeight=cropWidth/aspect;top-=(nextHeight-cropHeight)/2;cropHeight=nextHeight}
+        else{const nextWidth=cropHeight*aspect;left-=(nextWidth-cropWidth)/2;cropWidth=nextWidth}
+        left=clamp(left,0,width-cropWidth);top=clamp(top,0,height-cropHeight);
+        cropWidth=Math.min(cropWidth,width);cropHeight=Math.min(cropHeight,height);
+        return {left,top,width:cropWidth,height:cropHeight};
       };
       const paint=()=>{
         if(stopped||!width||video.readyState<2)return;
+        bufferContext.clearRect(0,0,width,height);
+        bufferContext.drawImage(video,0,0,width,height);
+        const frame=bufferContext.getImageData(0,0,width,height);
+        const nextCrop=removeBlackBackground(frame);
+        bufferContext.putImageData(frame,0,0);
+        if(nextCrop){
+          if(!crop)crop=nextCrop;
+          else{
+            const ease=.12;
+            crop.left+=(nextCrop.left-crop.left)*ease;crop.top+=(nextCrop.top-crop.top)*ease;
+            crop.width+=(nextCrop.width-crop.width)*ease;crop.height+=(nextCrop.height-crop.height)*ease;
+          }
+        }
         context.clearRect(0,0,width,height);
-        context.drawImage(video,0,0,width,height);
-        const frame=context.getImageData(0,0,width,height);
-        removeBlackBackground(frame);
-        context.putImageData(frame,0,0);
+        if(crop)context.drawImage(buffer,crop.left,crop.top,crop.width,crop.height,0,0,width,height);
       };
       const nextFrame=()=>{
         if(stopped)return;
