@@ -300,7 +300,8 @@
       };
       const removeBlackBackground=frame=>{
         const pixels=frame.data;
-        let minX=width,minY=height,maxX=-1,maxY=-1;
+        const columns=new Float32Array(width),rows=new Float32Array(height);
+        let totalWeight=0;
         for(let offset=0;offset<pixels.length;offset+=4){
           const red=pixels[offset],green=pixels[offset+1],blue=pixels[offset+2];
           const lightness=Math.max(red,green,blue);
@@ -308,10 +309,19 @@
           pixels[offset+3]=Math.min(pixels[offset+3],alpha);
           if(alpha>48){
             const index=offset/4,x=index%width,y=Math.floor(index/width);
-            if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;
+            const weight=alpha/255;
+            columns[x]+=weight;rows[y]+=weight;totalWeight+=weight;
           }
         }
-        if(maxX<minX||maxY<minY)return null;
+        if(totalWeight<12)return null;
+        const percentile=(values,portion)=>{
+          const target=totalWeight*portion;
+          let sum=0;
+          for(let index=0;index<values.length;index++){sum+=values[index];if(sum>=target)return index}
+          return values.length-1;
+        };
+        const minX=percentile(columns,.03),maxX=percentile(columns,.97);
+        const minY=percentile(rows,.03),maxY=percentile(rows,.97);
         const padding=Math.max(5,Math.round(Math.max(maxX-minX,maxY-minY)*.09));
         let left=minX-padding,top=minY-padding;
         let cropWidth=maxX-minX+1+padding*2,cropHeight=maxY-minY+1+padding*2;
