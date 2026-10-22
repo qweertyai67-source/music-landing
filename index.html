@@ -111,6 +111,10 @@
       .btn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
       .btn:focus:not(:focus-visible){outline:none}
     }
+    @media(max-width:760px){
+      .hero h1,.section-title,.reason h3,.format h3,.step h3,.faq .section-title{text-shadow:0 0 12px rgba(242,242,242,.14),0 0 28px rgba(242,242,242,.07)}
+      .hero-copy,.section-note,.reason p,.format p,.step p,.faq details p{text-shadow:0 0 10px rgba(242,242,242,.1),0 0 22px rgba(242,242,242,.05)}
+    }
     @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}.scroll-ghost{display:none}}
   </style>
 </head>
