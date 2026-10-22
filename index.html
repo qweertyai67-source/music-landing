@@ -102,9 +102,10 @@
     @media(max-width:760px){
       .scroll-ghost{display:block;position:fixed;top:clamp(24px,5svh,55px);left:0;width:clamp(88px,27.5vw,130px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% - 35px + var(--ghost-reveal,0px)),0,0);will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
       .scroll-ghost.from-right{left:auto;right:0;transform:translate3d(calc(100% + 35px - var(--ghost-reveal,0px)),0,0)}
-      .scroll-ghost video{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-      .scroll-ghost canvas{display:block;width:100%;height:auto;transform:rotate(45deg) scaleX(-1);transform-origin:center center}
-      .scroll-ghost.from-right canvas{transform:rotate(-45deg)}
+      .scroll-ghost img{display:block;width:100%;height:auto;transform:rotate(45deg) scaleX(-1);transform-origin:center center}
+      .scroll-ghost.from-right img{transform:rotate(-45deg)}
+      .hero-character-video video{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+      .hero-character-video canvas{display:block;width:100%;height:auto}
     }
     @media(max-width:760px){
       a,button,summary{-webkit-tap-highlight-color:transparent}
@@ -136,10 +137,10 @@
 </head>
 <body>
   <div class="horror-flash" aria-hidden="true"></div>
-  <div class="scroll-ghost" aria-hidden="true"><video src="/ghostface-mobile.mp4" autoplay muted loop playsinline preload="auto"></video><canvas></canvas></div>
+  <div class="scroll-ghost" aria-hidden="true"><img src="/ghostface-mobile.png" alt=""></div>
   <header class="wrap nav"><a class="brand" href="#top">ASS<span>T</span> / SITE</a><span class="nav-eyebrow mono"><span class="nav-eyebrow-arrow" aria-hidden="true">↗</span><span>Персональные сайты для артистов</span></span><a class="nav-link mono" href="#formats">Что внутри ↘</a></header>
   <main id="top">
-    <section class="wrap hero"><div class="hero-grid"><div><div class="eyebrow mono">Персональные сайты для артистов</div><h1><span class="hero-line">Твоя музыка.</span><br class="hero-line-break"><em class="hero-line">Твой образ.</em><br class="hero-line-break desktop-break"><span class="hero-line">Твой сайт.</span></h1><div class="actions"><a class="btn telegram-link" href="#telegram">Перейти в Telegram-канал <span>↗</span></a><a class="btn ghost" href="#concepts">Смотреть концепции ↓</a></div></div><p class="hero-copy">Собираем музыку, визуальный образ и важные ссылки в одну страницу, которую хочется открыть и запомнить.</p></div><img class="hero-character" src="/hero-character.png" alt="Артист, обращающийся к зрителю"><img class="hero-character-mobile" src="/mobile-character.png" alt="Артист" aria-hidden="true"><button class="motion-permission" type="button">Включить motion</button></section>
+    <section class="wrap hero"><div class="hero-grid"><div><div class="eyebrow mono">Персональные сайты для артистов</div><h1><span class="hero-line">Твоя музыка.</span><br class="hero-line-break"><em class="hero-line">Твой образ.</em><br class="hero-line-break desktop-break"><span class="hero-line">Твой сайт.</span></h1><div class="actions"><a class="btn telegram-link" href="#telegram">Перейти в Telegram-канал <span>↗</span></a><a class="btn ghost" href="#concepts">Смотреть концепции ↓</a></div></div><p class="hero-copy">Собираем музыку, визуальный образ и важные ссылки в одну страницу, которую хочется открыть и запомнить.</p></div><img class="hero-character" src="/hero-character.png" alt="Артист, обращающийся к зрителю"><div class="hero-character-mobile hero-character-video" aria-hidden="true"><video src="/ghostface-mobile.mp4" autoplay muted loop playsinline preload="auto"></video><canvas></canvas></div><button class="motion-permission" type="button">Включить motion</button></section>
     <div class="ticker"><div class="ticker-track mono"><span>Сайт артиста</span><b>✦</b><span>Страница релиза</span><b>✦</b><span>Электронный пресс-кит</span><b>✦</b><span>Все ссылки в одном месте</span><b>✦</b><span>Сайт артиста</span><b>✦</b></div></div>
     <section id="concepts" class="wrap"><div class="section-head"><div><div class="eyebrow mono">Визуальные направления</div><h2 class="section-title">Сайт, который звучит как ты.</h2></div><p class="section-note">Демонстрационные концепции. Показывают, как можно собрать страницу под разный характер и жанр.</p></div><div class="concepts"><article class="concept large"><div class="concept-content"><div class="concept-title">NOVA<br>NOIR</div><span class="tag">concept / 01</span></div><div class="concept-bottom"><p>Тёмная сцена для артиста с плотным визуальным миром и сильной обложкой.</p><span class="view">↗</span></div></article><div class="concept-stack"><article class="concept small"><div class="concept-content"><div class="concept-title">SLOW<br>WAVE</div><span class="tag">concept / 02</span></div><div class="concept-bottom"><span class="demo">indie / electronic</span><span class="view">↗</span></div></article><article class="concept alt"><div class="concept-content"><div class="concept-title">HEAT<br>CHECK</div><span class="tag">concept / 03</span></div><div class="concept-bottom"><span class="demo">hip-hop / r&b</span><span class="view">↗</span></div></article></div></div></section>
     <section class="wrap"><div class="section-head"><div><div class="eyebrow mono">Зачем это нужно</div><h2 class="section-title">Меньше поиска.<br>Больше контакта.</h2></div><p class="section-note">Сайт не заменяет соцсети. Он собирает самое важное в точку, куда удобно отправить слушателя, редактора или организатора.</p></div><div class="reasons"><article class="reason"><div class="reason-num">01 / НАЙТИ</div><h3>Музыка — в одном месте</h3><p>После короткого видео человеку не приходится искать тебя по разным платформам: релизы, соцсети и Telegram собраны на одной странице.</p></article><article class="reason"><div class="reason-num">02 / ПОНЯТЬ</div><h3>Образ — не только аватарка</h3><p>Типографика, фото, цвет и ритм страницы помогают передать характер проекта, а не раствориться в стандартном профиле.</p></article><article class="reason"><div class="reason-num">03 / ОТКРЫТЬ</div><h3>Контакт — без лишних шагов</h3><p>Для слушателя, медиа или букинга есть понятный маршрут: посмотреть, послушать, подписаться или связаться.</p></article></div></section>
@@ -275,11 +276,10 @@
       },{once:true});
     })();
     (()=>{
-      const host=document.querySelector('.scroll-ghost');
+      const host=document.querySelector('.hero-character-video');
       const video=host?.querySelector('video');
       const canvas=host?.querySelector('canvas');
-      const reducedMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
-      if(!host||!video||!canvas||reducedMotion.matches)return;
+      if(!host||!video||!canvas)return;
       const context=canvas.getContext('2d',{willReadFrequently:true});
       if(!context)return;
       const buffer=document.createElement('canvas');
