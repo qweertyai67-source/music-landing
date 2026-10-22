@@ -69,6 +69,33 @@
       .btn:hover{box-shadow:0 10px 22px #cecece22}
       .faq details[open]:not(.is-closing) summary::before,.faq details[open]:not(.is-closing) summary::after{background:#777}
     }
+    @media(max-width:760px){
+      #concepts,#formats{padding-top:36px;padding-bottom:44px}
+      #concepts .section-head,#formats .section-head{margin-bottom:20px}
+      #concepts .section-title,#formats .section-title{font-size:clamp(24px,7vw,30px);line-height:1.08;letter-spacing:-.025em;margin-top:10px}
+      #concepts .section-note,#formats .section-note{max-width:310px;margin-top:12px;font-size:10px;line-height:1.45;letter-spacing:0}
+      #concepts .eyebrow,#formats .eyebrow{font-size:10px}
+      .concepts{grid-template-columns:1fr;gap:8px}
+      .concept-stack{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .concept,.concept.large,.concept.small,.concept.alt{min-height:0;padding:13px}
+      .concept.large{height:158px}
+      .concept.small,.concept.alt{height:155px}
+      .concept-title{font-size:clamp(15px,5vw,20px);line-height:1.05;letter-spacing:.01em}
+      .tag{font-size:8px;padding:5px 7px;white-space:nowrap}
+      .concept-bottom p{font-size:9px;line-height:1.35;max-width:85%}
+      .concept-bottom .demo{font-size:8px;line-height:1.25;overflow-wrap:anywhere}
+      .concept-bottom .view{font-size:18px;line-height:1}
+      .features{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .feature,.feature:nth-child(2){min-height:0;height:175px;padding:14px 12px;transform:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+      .feature:nth-child(3){grid-column:1/-1;height:113px}
+      .feature::before{content:'01 / АРТИСТ';position:absolute;top:12px;right:12px;font-size:7px;letter-spacing:.06em;color:var(--muted)}
+      .feature:nth-child(2)::before{content:'02 / РЕЛИЗ';color:#444}
+      .feature:nth-child(3)::before{content:'03 / ССЫЛКИ'}
+      .feature-icon{font-size:19px;line-height:1;margin:10px 0 10px}
+      .feature h3{font-size:clamp(12px,3.6vw,15px);line-height:1.2;letter-spacing:.01em;margin:0 0 7px}
+      .feature p{font-size:9px;line-height:1.35;margin:0;max-width:100%;letter-spacing:0}
+      .feature:nth-child(3) .feature-icon{margin:0 0 5px}
+    }
     @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}}
   </style>
 </head>
