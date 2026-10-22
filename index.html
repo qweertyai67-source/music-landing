@@ -257,7 +257,7 @@
         if(!mobile.matches||reducedMotion.matches)return;
         const scrollable=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
         const progress=clamp(window.scrollY/scrollable,0,1);
-        const nearestQuarter=Math.min(...[.25,.5,.75,1].map(quarter=>Math.abs(progress-quarter)));
+        const nearestQuarter=Math.min(...[.25,.5,.75,.875].map(quarter=>Math.abs(progress-quarter)));
         const phase=clamp(1-nearestQuarter/.105,0,1);
         const reveal=phase*phase*(3-2*phase);
         ghost.style.setProperty('--ghost-reveal',`${(Math.min(window.innerWidth*.37,170)*reveal).toFixed(1)}px`);
