@@ -58,6 +58,17 @@
       .faq details[open]:not(.is-closing) summary::before{transform:translateY(-50%) scaleY(0);opacity:.55;background:#789b31}
       .faq details[open]:not(.is-closing) summary::after{opacity:.55;background:#789b31}
     }
+    @media(max-width:760px){
+      :root{--ink:#111;--paper:#f2f2f2;--muted:#999;--line:rgba(242,242,242,.18);--lime:#cecece;--orange:#aaa}
+      .hero-character-mobile{filter:grayscale(1) contrast(1.08) drop-shadow(0 24px 28px rgba(0,0,0,.38)) blur(calc(var(--mobile-scroll,0) * 1.2px))}
+      .concept{filter:grayscale(1)}
+      .feature{background:#1a1a1a}
+      .feature:nth-child(3){background:#292929}
+      .feature:nth-child(2) p{color:#4a4a4a}
+      .final:after{color:#b8b8b8}
+      .btn:hover{box-shadow:0 10px 22px #cecece22}
+      .faq details[open]:not(.is-closing) summary::before,.faq details[open]:not(.is-closing) summary::after{background:#777}
+    }
     @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}}
   </style>
 </head>
