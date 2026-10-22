@@ -100,9 +100,8 @@
     }
     .scroll-ghost{display:none}
     @media(max-width:760px){
-      .scroll-ghost{display:block;position:fixed;top:clamp(24px,5svh,55px);left:0;width:clamp(88px,27.5vw,130px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% - 35px + var(--ghost-reveal,0px)),0,0);transition:transform .18s cubic-bezier(.22,1,.36,1),opacity .18s ease;will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
+      .scroll-ghost{display:block;position:fixed;top:clamp(24px,5svh,55px);left:0;width:clamp(88px,27.5vw,130px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% - 35px + var(--ghost-reveal,0px)),0,0);will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
       .scroll-ghost.from-right{left:auto;right:0;transform:translate3d(calc(100% + 35px - var(--ghost-reveal,0px)),0,0)}
-      .scroll-ghost.is-retreating{transition-duration:.75s,.75s}
       .scroll-ghost img{display:block;width:100%;height:auto;transform:rotate(45deg) scaleX(-1);transform-origin:center center}
       .scroll-ghost.from-right img{transform:rotate(-45deg)}
     }
@@ -262,38 +261,70 @@
       const mobile=window.matchMedia('(max-width:760px)');
       const reducedMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
       if(!ghost)return;
-      let ticking=false;
       const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
-      const update=()=>{
-        ticking=false;
-        if(!mobile.matches||reducedMotion.matches)return;
-        const scrollable=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
-        const progress=clamp(window.scrollY/scrollable,0,1);
-        const appearances=[{at:.25,side:'left'},{at:.5,side:'right'},{at:.75,side:'left'},{at:.9,side:'right'}];
-        let reveal=0;
-        let side=appearances.find(item=>progress<item.at)?.side||'right';
-        let retreating=false;
+      const smoothstep=value=>value*value*(3-2*value);
+      const appearances=[{at:.25,side:'left'},{at:.5,side:'right'},{at:.75,side:'left'},{at:.9,side:'right'}];
+      let currentReveal=0,targetReveal=0,currentSide='left',pendingSide='left';
+      let frame=0,lastFrame=performance.now();
+      let baseViewportHeight=document.documentElement.clientHeight;
+      let lastViewportWidth=document.documentElement.clientWidth;
+      let lastDocumentHeight=document.documentElement.scrollHeight;
+      let scrollRange=Math.max(1,lastDocumentHeight-baseViewportHeight);
+      const readTarget=()=>{
+        const documentHeight=document.documentElement.scrollHeight;
+        const viewportWidth=document.documentElement.clientWidth;
+        const widthChanged=Math.abs(viewportWidth-lastViewportWidth)>2;
+        if(widthChanged){
+          lastViewportWidth=viewportWidth;
+          baseViewportHeight=document.documentElement.clientHeight;
+        }
+        if(Math.abs(documentHeight-lastDocumentHeight)>2||widthChanged){
+          lastDocumentHeight=documentHeight;
+          scrollRange=Math.max(1,documentHeight-baseViewportHeight);
+        }
+        const progress=clamp(window.scrollY/scrollRange,0,1);
+        let active=null;
         for(const item of appearances){
           const entryStart=item.at-.03;
           const exitEnd=item.at+(item.at===.9?.08:.12);
           if(progress<entryStart||progress>exitEnd)continue;
-          side=item.side;
-          retreating=progress>item.at;
+          const retreating=progress>item.at;
           const phase=retreating?clamp(1-(progress-item.at)/(exitEnd-item.at),0,1):clamp((progress-entryStart)/(item.at-entryStart),0,1);
-          reveal=phase*phase*(3-2*phase);
+          active={side:item.side,reveal:smoothstep(phase)};
           break;
         }
-        ghost.classList.toggle('from-right',side==='right');
-        ghost.classList.toggle('is-retreating',retreating);
-        const revealDistance=parseFloat(getComputedStyle(ghost).width)*.84+5;
-        ghost.style.setProperty('--ghost-reveal',`${(revealDistance*reveal).toFixed(1)}px`);
-        ghost.style.setProperty('--ghost-opacity',(reveal*.92).toFixed(3));
+        if(!active){targetReveal=0;return}
+        pendingSide=active.side;
+        targetReveal=pendingSide===currentSide?active.reveal:0;
       };
-      const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
+      const render=now=>{
+        frame=0;
+        if(!mobile.matches||reducedMotion.matches){currentReveal=targetReveal=0;ghost.style.setProperty('--ghost-opacity','0');return}
+        const delta=Math.min(64,now-lastFrame);lastFrame=now;
+        if(pendingSide!==currentSide&&currentReveal<=.012){
+          currentReveal=0;
+          currentSide=pendingSide;
+          ghost.classList.toggle('from-right',currentSide==='right');
+          readTarget();
+        }
+        const duration=targetReveal>currentReveal?70:520;
+        const easing=1-Math.exp(-delta/duration);
+        currentReveal+=(targetReveal-currentReveal)*easing;
+        if(Math.abs(targetReveal-currentReveal)<.001)currentReveal=targetReveal;
+        const revealDistance=parseFloat(getComputedStyle(ghost).width)*.84+5;
+        ghost.style.setProperty('--ghost-reveal',`${(revealDistance*currentReveal).toFixed(1)}px`);
+        ghost.style.setProperty('--ghost-opacity',(currentReveal*.92).toFixed(3));
+        if(Math.abs(targetReveal-currentReveal)>.001||pendingSide!==currentSide)frame=requestAnimationFrame(render);
+      };
+      const update=()=>{
+        readTarget();
+        if(!frame){lastFrame=performance.now();frame=requestAnimationFrame(render)}
+      };
+      const onScroll=update;
       window.addEventListener('scroll',onScroll,{passive:true});
-      window.addEventListener('resize',onScroll,{passive:true});
-      mobile.addEventListener('change',onScroll);
-      reducedMotion.addEventListener('change',onScroll);
+      window.addEventListener('resize',update,{passive:true});
+      mobile.addEventListener('change',update);
+      reducedMotion.addEventListener('change',update);
       update();
     })();
     (()=>{
