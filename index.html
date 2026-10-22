@@ -285,7 +285,7 @@
         }
         ghost.classList.toggle('from-right',side==='right');
         ghost.classList.toggle('is-retreating',retreating);
-        const revealDistance=parseFloat(getComputedStyle(ghost).width)+15;
+        const revealDistance=parseFloat(getComputedStyle(ghost).width)*.84+5;
         ghost.style.setProperty('--ghost-reveal',`${(revealDistance*reveal).toFixed(1)}px`);
         ghost.style.setProperty('--ghost-opacity',(reveal*.92).toFixed(3));
       };
