@@ -100,8 +100,11 @@
     }
     .scroll-ghost{display:none}
     @media(max-width:760px){
-      .scroll-ghost{display:block;position:fixed;top:clamp(24px,5svh,55px);left:0;width:clamp(175px,55vw,260px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% + var(--ghost-reveal,0px)),0,0);transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .32s ease;will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
-      .scroll-ghost img{display:block;width:100%;height:auto;transform:scaleX(-1)}
+      .scroll-ghost{display:block;position:fixed;top:clamp(24px,5svh,55px);left:0;width:clamp(88px,27.5vw,130px);z-index:4;pointer-events:none;opacity:var(--ghost-opacity,0);transform:translate3d(calc(-100% - 35px + var(--ghost-reveal,0px)),0,0);transition:transform .18s cubic-bezier(.22,1,.36,1),opacity .18s ease;will-change:transform,opacity;filter:drop-shadow(1px 0 2px rgba(235,235,235,.55)) drop-shadow(8px 12px 22px rgba(0,0,0,.5))}
+      .scroll-ghost.from-right{left:auto;right:0;transform:translate3d(calc(100% + 35px - var(--ghost-reveal,0px)),0,0)}
+      .scroll-ghost.is-retreating{transition-duration:.75s,.75s}
+      .scroll-ghost img{display:block;width:100%;height:auto;transform:rotate(-45deg) scaleX(-1);transform-origin:center center}
+      .scroll-ghost.from-right img{transform:rotate(45deg)}
     }
     @media(max-width:760px) and (prefers-reduced-motion:reduce){.faq summary::before,.faq details summary::after,.faq details[open] summary::after{transition:none}.scroll-ghost{display:none}}
   </style>
@@ -257,10 +260,24 @@
         if(!mobile.matches||reducedMotion.matches)return;
         const scrollable=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
         const progress=clamp(window.scrollY/scrollable,0,1);
-        const nearestQuarter=Math.min(...[.25,.5,.75,.875].map(quarter=>Math.abs(progress-quarter)));
-        const phase=clamp(1-nearestQuarter/.105,0,1);
-        const reveal=phase*phase*(3-2*phase);
-        ghost.style.setProperty('--ghost-reveal',`${(Math.min(window.innerWidth*.37,170)*reveal).toFixed(1)}px`);
+        const appearances=[{at:.25,side:'left'},{at:.5,side:'right'},{at:.75,side:'left'},{at:.9,side:'right'}];
+        let reveal=0;
+        let side=appearances.find(item=>progress<item.at)?.side||'right';
+        let retreating=false;
+        for(const item of appearances){
+          const entryStart=item.at-.03;
+          const exitEnd=item.at+(item.at===.9?.08:.12);
+          if(progress<entryStart||progress>exitEnd)continue;
+          side=item.side;
+          retreating=progress>item.at;
+          const phase=retreating?clamp(1-(progress-item.at)/(exitEnd-item.at),0,1):clamp((progress-entryStart)/(item.at-entryStart),0,1);
+          reveal=phase*phase*(3-2*phase);
+          break;
+        }
+        ghost.classList.toggle('from-right',side==='right');
+        ghost.classList.toggle('is-retreating',retreating);
+        const revealDistance=parseFloat(getComputedStyle(ghost).width)+15;
+        ghost.style.setProperty('--ghost-reveal',`${(revealDistance*reveal).toFixed(1)}px`);
         ghost.style.setProperty('--ghost-opacity',(reveal*.92).toFixed(3));
       };
       const onScroll=()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}};
